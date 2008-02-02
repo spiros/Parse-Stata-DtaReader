@@ -53,7 +53,7 @@ use Carp;
 
 BEGIN {
 
-    $Parse::Stata::DtaReader::VERSION = '0.59';
+    $Parse::Stata::DtaReader::VERSION = '0.591';
 
 # test for float endianness using little-endian 33 33 3b f3, which is a float code for 1.4
 

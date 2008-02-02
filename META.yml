@@ -1,6 +1,6 @@
 --- #YAML:1.0
 name:                Parse-Stata-DtaReader
-version:             0.59
+version:             0.591
 abstract:            ~
 license:             perl
 author:              ~

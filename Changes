@@ -6,9 +6,11 @@ Parse::Stata::DtaReader - CPAN release history
 
 =over 8
 
-=item 0.59 (2 February 2008)
+=item 0.591 (2 February 2008)
 
-Cleanup.  Added dta2sql tool.  Some improvements to tests (but some way to go yet).
+Renamed Parse::Stata::DtaReader (from File::Stata::DtaReader).
+Added dta2sql tool.
+Clean up and some improvements to tests (but some way to go yet).
 
 =item 0.32 (14 December 2007)
 
