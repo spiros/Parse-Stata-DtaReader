@@ -1,5 +1,8 @@
 #!/usr/bin/perl -w
 
+eval 'exec /usr/bin/perl -w -S $0 ${1+"$@"}'
+    if 0; # not running under some shell
+
 =head1 NAME
 
 dta2csv - command-line tool to convert Stata 8 and Stata 10 .dta files to csv
@@ -76,7 +79,7 @@ sub dta2csv {
             }
             ( my $name = $file ) =~ s/(\.dta)?$/.csv/;
             my $no = '';
-            $name =~ s/-?$no\.sql$/'-' . ++$no . '.sql'/e while -e $name;
+            $name =~ s/-?$no\.csv$/'-' . ++$no . '.csv'/e while -e $name;
             open CSV, '>', $name;
             print CSV join( ',', @{ $dta->{varlist} } ) . "\n";
 

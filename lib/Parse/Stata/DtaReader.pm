@@ -34,6 +34,8 @@ to obtain the data.
 
 All Stata missing values will be converted into a perl undef, losing the information about the type of missing value.
 
+Versions prior to 0.6 had major errors in the treatment of files with different endianness from the native perl.
+
 =head1 AUTHOR
 
 Written by Franck Latremoliere.
@@ -53,7 +55,7 @@ use Carp;
 
 BEGIN {
 
-    $Parse::Stata::DtaReader::VERSION = '0.591';
+    $Parse::Stata::DtaReader::VERSION = '0.6';
 
 # test for float endianness using little-endian 33 33 3b f3, which is a float code for 1.4
 
@@ -152,14 +154,14 @@ sub prepareDataReader($) {
             $self->{rowPattern} .=
               $self->{byteorder} == $Parse::Stata::DtaReader::byteOrder
               ? 'd'
-              : 'A8';
+              : 'H16';
         }
         elsif ( $vt == 254 ) {
             $self->{rowSize} += 4;
             $self->{rowPattern} .=
               $self->{byteorder} == $Parse::Stata::DtaReader::byteOrder
               ? 'f'
-              : 'A4';
+              : 'H8';
         }
         elsif ( $vt == 253 ) {
             $self->{rowSize} += 4;
@@ -193,17 +195,17 @@ sub readRow($) {
     my @a = unpack( $self->{rowPattern}, $_ );
     for ( my $i = 0 ; $i < @a ; $i++ ) {
         my $t = $self->{typlist}->[$i];
-        if ( $self->{byteorder} != $Parse::Stata::DtaReader::byteOrder ) {
-            if ( $t == 254 ) {
-                $a[$i] = unpack( 'f', pack( 'N', ( unpack( 'V', $a[$i] ) ) ) );
-            }
-            elsif ( $t == 255 ) {
-                $a[$i] =
-                  unpack( 'd',
-                    pack( 'NN', reverse( unpack( 'VV', $a[$i] ) ) ) );
-            }
-        }
         if ( defined $a[$i] ) {
+            if ( $self->{byteorder} != $Parse::Stata::DtaReader::byteOrder ) {
+                if ( $t == 254 ) {
+                    $a[$i] = unpack( 'f', pack( 'N', ( unpack( 'V', pack('H8',$a[$i] )) ) ) );
+                }
+                elsif ( $t == 255 ) {
+                    $a[$i] =
+                      unpack( 'd',
+                        pack( 'NN', reverse( unpack( 'VV', pack('H16',$a[$i]) ) ) ) );
+                }
+            }
             if ( $t < 245 ) {
                 $a[$i] =~ s/\x00.*$//s;
             }
@@ -217,10 +219,10 @@ sub readRow($) {
                 undef $a[$i] if $a[$i] > 2147483620 && $a[$i] < 2147483648;
             }
             elsif ( $t == 254 ) {
-                undef $a[$i] if $a[$i] > 1.701e38 || $a[$i] < -1.701e38;
+                undef $a[$i] if defined $a[$i] and $a[$i] > 1.701e38 || $a[$i] < -1.701e38;
             }
             elsif ( $t == 255 ) {
-                undef $a[$i] if $a[$i] > 8.988e307 || $a[$i] < -1.798e308;
+                undef $a[$i] if defined $a[$i] and $a[$i] > 8.988e307 || $a[$i] < -1.798e308;
             }
         }
     }

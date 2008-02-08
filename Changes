@@ -6,6 +6,10 @@ Parse::Stata::DtaReader - CPAN release history
 
 =over 8
 
+=item 0.6 (8 February 2008)
+
+Fix major bugs in endianness correction and in dta2csv.
+
 =item 0.591 (2 February 2008)
 
 Renamed Parse::Stata::DtaReader (from File::Stata::DtaReader).
