@@ -1,7 +1,7 @@
 #!/usr/bin/perl -w
 
 eval 'exec /usr/bin/perl -w -S $0 ${1+"$@"}'
-    if 0; # not running under some shell
+    if 0; # to go to perl if running under some shell
 
 =head1 NAME
 
@@ -9,27 +9,34 @@ dta2csv - command-line tool to convert Stata 8 and Stata 10 .dta files to csv
 
 =head1 SYNOPSIS
 
-=over 8
+dta2csv I<file.dta> [I<otherfile.dta> ...]
 
-=item dta2csv file.dta [otherfile.dta ...]
-
-=back
+The result will be in I<file.csv> (or I<file-1.csv>, I<file-2.csv>, etc; no overwriting of existing files).
 
 =head1 BUGS
 
-This is a simple command line tool using Parse::Stata::DtaReader,
-with minimal documentation and error management.  All types of
-missing values in the .dta file are turned into blank cells in the CSV.
+Minimal documentation, error management and testing.
+All types of missing values in the .dta file are turned into blank cells in the CSV.
+Probably some other problems.
+
+=head1 NO WARRANTY
+
+This code comes with ABSOLUTELY NO WARRANTY of any kind.
 
 =head1 AUTHOR
 
-Written by Franck Latremoliere. Copyright (c) 2007, 2008 Reckon LLP.
-http://www.reckon.co.uk/staff/franck/
+Written by Franck Latremoliere.
+Copyright (c) 2007, 2008 Reckon LLP.
+L<http://www.reckon.co.uk/staff/franck/>
 
 =head1 LICENCE
 
 This program is free software; you can use, redistribute and/or modify it under the same terms as Perl itself
 (Artistic Licence or GNU GPL).
+
+=head1 SEE ALSO
+
+L<Parse::Stata::DtaReader> does the parsing.
 
 =cut
 

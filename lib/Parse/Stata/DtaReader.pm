@@ -8,39 +8,63 @@ Parse::Stata::DtaReader - read Stata 8 and Stata 10 .dta files
 
 This module reads Stata 8 and Stata 10 .dta files.
 
-The API is object oriented: create a new instance of Parse::Stata::DtaReader
-by providing a handle to the .dta file, and then use attributes and methods of that object
-to obtain the data.
+The API is object oriented: create a new instance of
+Parse::Stata::DtaReader by providing a handle to the .dta file, and then
+use attributes and methods of that object to obtain the data.
 
 =head1 SYNOPSIS
 
-=over 8
+=head2 Open a .dta file
 
-=item open my $fileHandle, '<', 'test.dta';
+    open my $fileHandle, '<', 'test.dta';
+    
+    my $dta = new Parse::Stata::DtaReader($fileHandle);
 
-=item my $dta = new Parse::Stata::DtaReader($fileHandle);
+=head2 Retrieve general information
 
-=item print "$dta->{nvar} vars; $dta->{nobs} obs\n";
+Number of variables and observations:
 
-=item for (my $i = 0; $i < $dta->{nvar}; ++$i) { print "$dta->{varlist}[$i] has SQL type $dta->sqlType($i)\n"; }
+    print "$dta->{nvar} variables; $dta->{nobs} observations\n";
 
-=item print join( ',', @{ $dta->{varlist} } ) . "\n";
+Variable names and types:
 
-=item while ( my @a = $dta->readRow ) { print join( ',', @a ) . "\n"; }
+    print join( ',', @{ $dta->{varlist} } ) . "\n";
+    
+    for (my $i = 0; $i < $dta->{nvar}; ++$i) {
+        print "$dta->{varlist}[$i] has SQL type " .
+            $dta->sqlType($i) . "\n";
+    }
 
-=back
+=head2 Retrieve data
+
+    while ( my @a = $dta->readRow ) {
+        print join( ',', @a ) . "\n";
+    }
+
+=head1 SOURCES
+
+Stata .dta format specification from:
+    http://www.stata.com/help.cgi?dta
+    http://www.stata.com/help.cgi?dta_113
 
 =head1 BUGS
 
-All Stata missing values will be converted into a perl undef, losing the information about the type of missing value.
+It works for me, but has not been fully tested.
+Versions prior to 0.7 had serious errors in converting some data types.
+There are probably some similar bugs left.
 
-Versions prior to 0.6 had major errors in the treatment of files with different endianness from the native perl.
+All Stata missing values will be converted into a perl undef,
+losing the information about the type of missing value.
+
+=head1 NO WARRANTY
+
+This code comes with ABSOLUTELY NO WARRANTY of any kind.
 
 =head1 AUTHOR
 
 Written by Franck Latremoliere.
 Copyright (c) 2007, 2008 Reckon LLP.
-http://www.reckon.co.uk/staff/franck/
+L<http://www.reckon.co.uk/staff/franck/>
 
 =head1 LICENCE
 
@@ -55,15 +79,15 @@ use Carp;
 
 BEGIN {
 
-    $Parse::Stata::DtaReader::VERSION = '0.6';
+    $Parse::Stata::DtaReader::VERSION = '0.68';
 
 # test for float endianness using little-endian 33 33 3b f3, which is a float code for 1.4
 
     my $testFloat = unpack( 'f', pack( 'h*', 'f33b3333' ) );
-    $Parse::Stata::DtaReader::byteOrder = 1
+    $Parse::Stata::DtaReader::byteOrder = 1 # big-endian
       if ( 2.0 * $testFloat > 2.7 && 2.0 * $testFloat < 2.9 );
     $testFloat = unpack( 'f', pack( 'h*', '33333bf3' ) );
-    $Parse::Stata::DtaReader::byteOrder = 2
+    $Parse::Stata::DtaReader::byteOrder = 2 # little-endian
       if ( 2.0 * $testFloat > 2.7 && 2.0 * $testFloat < 2.9 );
     warn "Unable to detect endianness of float storage on your machine"
       unless $Parse::Stata::DtaReader::byteOrder;
@@ -173,7 +197,7 @@ sub prepareDataReader($) {
         }
         elsif ( $vt == 251 ) {
             $self->{rowSize} += 1;
-            $self->{rowPattern} .= 'C';
+            $self->{rowPattern} .= 'c';
         }
         elsif ( $vt < 245 ) {
             $self->{rowSize} += $vt;
@@ -213,9 +237,11 @@ sub readRow($) {
                 undef $a[$i] if $a[$i] > 100 && $a[$i] < 128;
             }
             elsif ( $t == 252 ) {
+                $a[$i] = unpack 's', pack 'S', $a[$i];
                 undef $a[$i] if $a[$i] > 32740 && $a[$i] < 32768;
             }
             elsif ( $t == 253 ) {
+                $a[$i] = unpack 'l', pack 'L', $a[$i];
                 undef $a[$i] if $a[$i] > 2147483620 && $a[$i] < 2147483648;
             }
             elsif ( $t == 254 ) {

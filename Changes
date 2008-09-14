@@ -6,15 +6,19 @@ Parse::Stata::DtaReader - CPAN release history
 
 =over 8
 
+=item 0.68 (14 September 2008)
+
+Fixed serious bug in the handling of negative integers.
+
 =item 0.6 (8 February 2008)
 
-Fix major bugs in endianness correction and in dta2csv.
+Fixed serious bugs in endianness correction and in dta2csv.
 
 =item 0.591 (2 February 2008)
 
 Renamed Parse::Stata::DtaReader (from File::Stata::DtaReader).
 Added dta2sql tool.
-Clean up and some improvements to tests (but some way to go yet).
+Minor improvements to tests.
 
 =item 0.32 (14 December 2007)
 
@@ -22,7 +26,8 @@ Minor improvements to documentation.
 
 =item 0.31 (25 November 2007)
 
-Fix installation bug (remove Mac OS X resource forks from tar by exporting environment variable COPY_EXTENDED_ATTRIBUTES_DISABLE=1).
+Fixed installation bug (remove Mac OS X resource forks from tar by
+exporting environment variable COPY_EXTENDED_ATTRIBUTES_DISABLE=1).
 
 =item 0.3 (24 November 2007)
 
@@ -35,14 +40,18 @@ has a different endianness as the local platform.
 
 =item 0.092 (11 November 2007)
 
-First public release.  Not much testing done.
+First public release.
 
 =back
 
 =head1 AUTHOR
 
 Written by Franck Latremoliere. Copyright (c) 2007 Reckon LLP.
-http://www.reckon.co.uk/staff/franck/
+    http://www.reckon.co.uk/staff/franck/
+
+=head1 NO WARRANTY
+
+This code comes with ABSOLUTELY NO WARRANTY of any kind.
 
 =head1 LICENCE
 
