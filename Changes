@@ -1,10 +1,14 @@
 =head1 NAME
 
-Parse::Stata::DtaReader - CPAN release history
+Parse::Stata::DtaReader - extract data from Stata 8 and Stata 10 .dta files
 
 =head1 RELEASE HISTORY
 
 =over 8
+
+=item 0.681 (18 October 2008)
+
+Presentational improvements.
 
 =item 0.68 (14 September 2008)
 

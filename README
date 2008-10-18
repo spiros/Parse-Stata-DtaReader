@@ -1,0 +1,3 @@
+Parse::Stata::DtaReader is a module to extract data from Stata 8 and Stata 10 .dta files.
+
+The distribution also contains the command-line tools dta2csv and dta2sql.
